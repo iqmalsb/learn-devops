@@ -1,0 +1,19 @@
+# Binaries (the compiled files)
+main
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# SQLite Databases
+./database
+*.db
+*.db-journal
+
+# IDE specific
+.vscode/
+.idea/
+
+# OS specific
+.DS_Store
