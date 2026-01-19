@@ -35,19 +35,21 @@ func main() {
 	defer db.Close()
 
 	// Create a simple table if it doesn't exist
-	statement, _ := db.Prepare("CREATE TABLE IF NOT EXISTS logs (id INTEGER PRIMARY KEY, message TEXT, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)")
-	statement.Exec()
-
-	// Create a trigger to update created_at on insert if not provided
-	statement, _ = db.Prepare("CREATE TRIGGER IF NOT EXISTS set_created_at AFTER INSERT ON logs BEGIN UPDATE logs SET created_at = CURRENT_TIMESTAMP WHERE rowid = NEW.rowid AND NEW.created_at IS NULL; END;")
-	statement.Exec()
-
-	if appName == "Payroll" {
-		statement, _ = db.Prepare("CREATE TABLE IF NOT EXISTS employees (id INTEGER PRIMARY KEY, first_name TEXT, last_name TEXT, address_one TEXT, address_two TEXT, postcode TEXT, city TEXT, state TEXT, date_of_birth TEXT, sex TEXT, ethnicity TEXT, position TEXT, department TEXT, joined_at TEXT, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP, deleted_at DATETIME)")
-		statement.Exec()
+	if _, err := db.Exec("CREATE TABLE IF NOT EXISTS logs (id INTEGER PRIMARY KEY, message TEXT, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)"); err != nil {
+		log.Fatal(err)
 	}
 
-	// Run payroll-dump.sql, located at ./payroll-dump.sql
+	// Create a trigger to update created_at on insert if not provided
+	if _, err := db.Exec("CREATE TRIGGER IF NOT EXISTS set_created_at AFTER INSERT ON logs BEGIN UPDATE logs SET created_at = CURRENT_TIMESTAMP WHERE rowid = NEW.rowid AND NEW.created_at IS NULL; END;"); err != nil {
+		log.Fatal(err)
+	}
+
+	if appName == "Payroll" {
+		if _, err := db.Exec("CREATE TABLE IF NOT EXISTS employees (id INTEGER PRIMARY KEY, first_name TEXT, last_name TEXT, address_one TEXT, address_two TEXT, postcode TEXT, city TEXT, state TEXT, date_of_birth TEXT, sex TEXT, ethnicity TEXT, position TEXT, department TEXT, joined_at TEXT, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP, deleted_at DATETIME)"); err != nil {
+			log.Fatal(err)
+		}
+	}
+
 	if appName == "Payroll" {
 		var count int
 		err := db.QueryRow("SELECT COUNT(*) FROM employees").Scan(&count)
@@ -56,7 +58,7 @@ func main() {
 		}
 
 		if count == 0 { // Only run if the table has no records
-			dumpFile := "./database/seeder/payroll-dump.sql"
+			dumpFile := "./seeder/payroll-dump.sql"
 			dump, err := os.ReadFile(dumpFile)
 			if err != nil {
 				log.Fatal(err)

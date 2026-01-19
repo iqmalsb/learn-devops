@@ -28,7 +28,7 @@ RUN mkdir -p /app/database && chown -R appuser:appgroup /app
 
 # 3. Copy the binary
 COPY --from=builder /app/enterprise-app .
-COPY ./database/seeder/payroll-dump.sql /app/database/seeder/payroll-dump.sql
+COPY ./seeder/payroll-dump.sql /app/database/seeder/payroll-dump.sql
 
 # 4. Switch to the non-root user
 USER appuser

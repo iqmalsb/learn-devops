@@ -17,9 +17,9 @@ This roadmap focuses on transitioning from a Web Developer mindset to an Infrast
 * **Data Persistence:** Using `database/sql` with SQLite for local state.
 
 ### Deliverables
-- [/] A Go API that returns its name and a simulated "work" response.
-- [ ] A simple Vue.js dashboard to trigger API calls and display JSON results.
-- [ ] A functional SQLite database file (`enterprise.db`) initialized with basic tables.
+- [x] A Go API that returns its name and a simulated "work" response.
+- [x] A simple Vue.js dashboard to trigger API calls and display JSON results.
+- [x] A functional SQLite database file (`enterprise.db`) initialized with basic tables.
 
 ---
 
